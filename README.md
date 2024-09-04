@@ -1,2 +1,9 @@
-# Night-Shift
-Night Shift is a game built in the Unity engine for a team project in CSC 449 at Eastern Kentucky University
+Night Shift
+Developed By:
+Dakota Castle
+Caleb Abney
+Benjamin Haeckler
+Makendra Phipps
+
+Overview
+	Night Shift is a 2D top down survival game. The player takes on the role of a night shift mall cop in the 80s. Each night brings 
