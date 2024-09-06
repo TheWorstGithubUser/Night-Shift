@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Create an action map called "Player" and an action called "Move"
+//Create an action map called "Player" and an action called "Move" and make sure your input system is called "playerInputActions"
 public class GameInput : MonoBehaviour
 {
   private PlayerInputActions playerInputActions;
