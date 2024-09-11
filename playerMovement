@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class playerMovement : MonoBehaviour
+{
+    // Works in tandem with GameInput.cs to account for Unity's new Input system
+    [SerializeField] private float playerSpeed = 5.0f;
+    [SerializeField] private GameInput gameInput;
+
+    private bool isWalking;
+
+    Vector2 inputVector = new Vector2(0, 0);
+
+    private void Update()
+    {
+        inputVector = gameInput.GetMovementVectorNormalized();
+
+        Vector3 moveDir = new Vector3(inputVector.x, inputVector.y, 0);
+
+        isWalking = moveDir != Vector3.zero;
+
+        transform.position += moveDir * playerSpeed * Time.deltaTime;
+    }
+
+
+    public float GetPlayerDirectionX()
+    {
+        return inputVector.x;
+    }
+
+    public float GetPlayerDirectionY()
+    {
+        return inputVector.y;
+    }
+
+    public bool GetIsWalking()
+    {
+        return isWalking;
+    }
+}
