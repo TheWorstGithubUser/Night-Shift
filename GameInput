@@ -1,20 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-//Create an action map called "Player" and an action called "Move" and make sure your input system is called "playerInputActions"
 public class GameInput : MonoBehaviour
 {
-  private PlayerInputActions playerInputActions;
-  private void Awake(){
-    playerInputActions = new PlayerInputActions();
-    playerInputActions.Player.Enable(); 
-  }
+    private PlayerInputActions playerInputActions;
+    private void Awake()
+    {
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Player.Enable();
+    }
 
-  public Vector2 GetMovementVectorNormalized(){
-    Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
+    public Vector2 GetMovementVectorNormalized()
+    {
+        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
 
-    inputVector = inputVector.normalized;
+        inputVector = inputVector.normalized;
 
-    return inputVector;
-  }
+        return inputVector;
+    }
+
+    public Vector2 GetPlayerCursorLocation()
+    {
+        Vector2 mousePos = playerInputActions.Player.Mouse.ReadValue<Vector2>();
+        return mousePos;
+    }
+
+}
