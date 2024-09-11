@@ -1,0 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerCursor : MonoBehaviour
+{
+    [SerializeField] private GameObject player;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameInput Input;
+    [SerializeField] private float cursorRadius = 5f;
+    [SerializeField] private float offset = 90f;
+
+    void Update()
+    {
+        //Have cursor circle the player relative to mouse position
+        //Get mouse input
+        Vector2 cursorPos = Input.GetPlayerCursorLocation();
+        cursorPos = new Vector2(cursorPos.x - Screen.width / 2, cursorPos.y - Screen.height / 2);
+        //Create variables for player's position (cX, cY) and point position (pX, pY) 
+        float cX = player.transform.position.x;
+        float cY = player.transform.position.y;
+        float pX = cursorPos.x;
+        float pY = cursorPos.y;
+        //Formula for placing the cursor around the player
+        float vX = pX - cX;
+        float vY = pY - cY;
+        float magV = Mathf.Sqrt(vX * vX + vY * vY);
+        float aX = cX + vX / magV * cursorRadius;
+        float aY = cY + vY / magV * cursorRadius;
+
+        //Change position of cursor
+        if (float.IsNaN(aX))
+        {  //IsNan should only be true on the first frame, if ever. This is merely a safety measure as a value of NaN will crash the game
+            aX = 0;
+        }
+        if (float.IsNaN(aY))
+        {
+            aY = 0;
+        }
+        //transform.position = new Vector2(aX,aY);
+        transform.position = new Vector2(aX, aY);
+
+        //Change rotation of cursor
+        Vector2 direction = new Vector2(pX - transform.position.x, pY - transform.position.y);
+        float angleOfRotation = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        if (float.IsNaN(angleOfRotation)) // if NaN
+        {
+            angleOfRotation = 0;    // stop being NaN 
+        }
+        //Debug.Log(angleOfRotation);
+        transform.localEulerAngles = new Vector3(0f, 0f, angleOfRotation + offset);
+    }
+}
