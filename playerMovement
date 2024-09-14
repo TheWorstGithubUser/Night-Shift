@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class playerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     // Works in tandem with GameInput.cs to account for Unity's new Input system
     [SerializeField] private float playerSpeed = 5.0f;
