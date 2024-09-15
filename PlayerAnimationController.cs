@@ -33,8 +33,10 @@ public class PlayerAnimationController : MonoBehaviour{
             animator.Play (STAND_ANIM_NAME);
         }
 
-        armSprite.transform.rotation = playerCursor.transform.rotation;
-        armSprite.flipX = 0 > playerCursor.GetDirection().x;
+	if (armSprite != null){
+        	armSprite.transform.rotation = playerCursor.transform.rotation;
+        	armSprite.flipX = 0 > playerCursor.GetDirection().x;
+	}
 
 		spriteRenderer.flipX = playerCursor.GetDirection().x < 0;
     }
