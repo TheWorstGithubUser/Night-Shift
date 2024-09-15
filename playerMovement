@@ -23,6 +23,9 @@ public class PlayerMovement : MonoBehaviour
         transform.position += moveDir * playerSpeed * Time.deltaTime;
     }
 
+    public Vector2 GetPlayerDirection () {
+	    return inputVector;
+    }
 
     public float GetPlayerDirectionX()
     {
