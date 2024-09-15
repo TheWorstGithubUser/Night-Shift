@@ -10,12 +10,15 @@ public class PlayerCursor : MonoBehaviour
     [SerializeField] private float cursorRadius = 5f;
     [SerializeField] private float offset = 90f;
 
+    private Vector2 direction;
+
     void Update()
     {
         //Have cursor circle the player relative to mouse position
         //Get mouse input
         Vector2 cursorPos = Input.GetPlayerCursorLocation();
-        cursorPos = new Vector2(cursorPos.x - Screen.width / 2, cursorPos.y - Screen.height / 2);
+        //cursorPos = new Vector2(cursorPos.x - Screen.width / 2, cursorPos.y - Screen.height / 2);
+        cursorPos = mainCamera.ScreenToWorldPoint (new Vector3 (cursorPos.x, cursorPos.y, 0));
         //Create variables for player's position (cX, cY) and point position (pX, pY) 
         float cX = player.transform.position.x;
         float cY = player.transform.position.y;
@@ -41,7 +44,7 @@ public class PlayerCursor : MonoBehaviour
         transform.position = new Vector2(aX, aY);
 
         //Change rotation of cursor
-        Vector2 direction = new Vector2(pX - transform.position.x, pY - transform.position.y);
+        direction = new Vector2(pX - transform.position.x, pY - transform.position.y);
         float angleOfRotation = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         if (float.IsNaN(angleOfRotation)) // if NaN
         {
@@ -49,5 +52,10 @@ public class PlayerCursor : MonoBehaviour
         }
         //Debug.Log(angleOfRotation);
         transform.localEulerAngles = new Vector3(0f, 0f, angleOfRotation + offset);
+    }
+
+    // gets the direction between the mouse and the player
+    public Vector2 GetDirection () {
+	    return direction;
     }
 }
