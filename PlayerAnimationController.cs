@@ -23,10 +23,11 @@ public class PlayerAnimationController : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         var mdir = movement.GetPlayerDirection ();
+		// deprecated and should be removed
         if (mdir.x != 0) {
 			facingDir = mdir.x;
 		}
-        if (mdir != Vector2.zero) {
+        if (mdir != Vector2.zero) { // decides if the player is walking or standing
             animator.Play (WALK_ANIM_NAME);
         }
         else {
@@ -38,6 +39,7 @@ public class PlayerAnimationController : MonoBehaviour{
         	armSprite.flipX = 0 > playerCursor.GetDirection().x;
 	}
 
+		// decides player facing direction
 		spriteRenderer.flipX = playerCursor.GetDirection().x < 0;
     }
 }
