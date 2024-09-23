@@ -7,7 +7,8 @@ using UnityEngine;
 public class FieldOfView : MonoBehaviour
 {
     [SerializeField] private LayerMask layerMask;
-    private float fov;
+    [SerializeField] private GameObject Player;
+    private float fov = 40f;
     private Mesh mesh;
     Vector3 origin;
     private float startingAngle;
@@ -17,11 +18,12 @@ public class FieldOfView : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        origin = Vector3.zero;
+        origin = Player.transform.position;
     }
-    private void LateUpdate()    {
+    private void LateUpdate()
+    {
         //set values
-        float fov = 40f;
+        fov = 40f;
         int rayCount = 50;
         float angle = startingAngle;
         float angleIncrease = fov / rayCount;
@@ -37,12 +39,12 @@ public class FieldOfView : MonoBehaviour
         int vertexIndex = 1;
         int triangleIndex = 0;
 
-        for(int i = 0; i <= rayCount; i++)
+        for (int i = 0; i <= rayCount; i++)
         {
-            Vector3 vertex = origin + GetVectorFromAngle(angle) * viewDistance;
-            RaycastHit2D raycastHit2D = Physics2D.Raycast(origin, GetVectorFromAngle(angle), viewDistance, layerMask);
-           
-            if(raycastHit2D.collider == null)
+            Vector3 vertex = origin + GetVectorFromAngle(startingAngle) * viewDistance;
+            RaycastHit2D raycastHit2D = Physics2D.Raycast(origin, GetVectorFromAngle(startingAngle), viewDistance, layerMask);
+
+            if (raycastHit2D.collider == null)
             {
                 //no hit
             }
@@ -64,13 +66,20 @@ public class FieldOfView : MonoBehaviour
             }
 
             vertexIndex++;
-            angle -= angleIncrease;
+            startingAngle -= angleIncrease;
         }
 
         mesh.vertices = vertices;
         mesh.uv = uv;
         mesh.triangles = triangles;
         mesh.bounds = new Bounds(origin, Vector3.one * 1000f);
+
+
+    }
+
+    void FixedUpdate() 
+    {
+        origin = Player.transform.position;
     }
 
     public void SetOrigin(Vector3 origin)
@@ -79,9 +88,9 @@ public class FieldOfView : MonoBehaviour
     }
 
     //will be referenced in player class
-    public void SetAimDirection(Vector3 aimDirection)
+    public void SetAimDirection(float angleOfRotation)
     {
-        startingAngle = GetAngleFromVectorFloat(aimDirection) - fov / 2F;
+        startingAngle = angleOfRotation + (fov / 2f);
     }
 
     public static Vector3 GetVectorFromAngle(float angle)
@@ -90,13 +99,4 @@ public class FieldOfView : MonoBehaviour
         return new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
     }
 
-    //turns float to a vector
-    public static float GetAngleFromVectorFloat(Vector3 dir)
-    {
-        dir = dir.normalized;
-        float n = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        if (n > 0) n += 360;
-
-        return n;
-    }
 }
