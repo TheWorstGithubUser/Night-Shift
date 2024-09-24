@@ -41,8 +41,8 @@ public class FieldOfView : MonoBehaviour
 
         for (int i = 0; i <= rayCount; i++)
         {
-            Vector3 vertex = origin + GetVectorFromAngle(startingAngle) * viewDistance;
-            RaycastHit2D raycastHit2D = Physics2D.Raycast(origin, GetVectorFromAngle(startingAngle), viewDistance, layerMask);
+            Vector3 vertex = origin + GetVectorFromAngle(angle) * viewDistance;
+            RaycastHit2D raycastHit2D = Physics2D.Raycast(origin, GetVectorFromAngle(angle), viewDistance, layerMask);
 
             if (raycastHit2D.collider == null)
             {
@@ -66,7 +66,7 @@ public class FieldOfView : MonoBehaviour
             }
 
             vertexIndex++;
-            startingAngle -= angleIncrease;
+            angle -= angleIncrease;
         }
 
         mesh.vertices = vertices;
