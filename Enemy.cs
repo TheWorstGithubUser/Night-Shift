@@ -25,6 +25,8 @@ public class Enemy : MonoBehaviour
 
     public bool seesPlayer = false;
 
+    Vector2 facingDirection;
+
     void Start()
     {
         target = waypoints[currentIndex].transform.position;
@@ -52,6 +54,7 @@ public class Enemy : MonoBehaviour
             transform.position = Vector2.MoveTowards(transform.position, target, run * Time.deltaTime);
         }
 
+		facingDirection = (target - transform.position).normalized;
     }
 
     void SetTarget(Vector3 t)
@@ -62,11 +65,18 @@ public class Enemy : MonoBehaviour
     bool SpotPlayer()
     {
         //test if it can switch by using distance
-        if(Vector3.Distance(transform.position, player.transform.position) < 2.5f) 
-        {
-            return true;
+        bool facingPlayer = false;
+        Vector2 playerDirection = (player.transform.position - transform.position).normalized;
+        if (seesPlayer) {
+            facingPlayer = true;
         }
-        return false;
+        else {
+            facingPlayer = Vector2.Dot (playerDirection, facingDirection) > Mathf.Cos(maxAngle * Mathf.Deg2Rad);
+        }
+
+        var res = Physics2D.Raycast (transform.position, playerDirection, Vector2.Distance(player.transform.position, transform.position), obstacleMask);
+
+        return Vector3.Distance (transform.position, player.transform.position) < maxRadius && facingPlayer && res.collider == null;
     }
 
 }
