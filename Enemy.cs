@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
 
     private float time;
     public float increment = 1/3f;
+    public bool RemembersPlayer => time <= 1;
 
     public int currentIndex = 0;
 
@@ -34,6 +35,9 @@ public class Enemy : MonoBehaviour
 
     public float pushRay = 0.5f;
     public float pushRayDistance = 1;
+    private float waitTime = 0;
+
+    private bool autoTarget = true;
 
     void Start()
     {
@@ -48,35 +52,40 @@ public class Enemy : MonoBehaviour
     {
         seesPlayer = SpotPlayer();
         float movementSpeed = run;
-        if (!seesPlayer)
-        {
-            if (time > 1f)
+        if (waitTime <= 0) {
+            if (!seesPlayer)
             {
-                SetTarget(waypoints[currentIndex].transform.position);
-                //transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
-                movementSpeed = walk;
-
-                if (Vector2.Distance(transform.position, target) < 1)
+                if (!RemembersPlayer)
                 {
-                    currentIndex = (currentIndex + 1) % waypoints.Length;
-                    target = waypoints[currentIndex].transform.position;
+                    if (autoTarget)
+                        SetTarget(waypoints[currentIndex].transform.position);
+                    //transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
+                    movementSpeed = walk;
+    
+                    if (Vector2.Distance(transform.position, target) < 1)
+                    {
+                        currentIndex = (currentIndex + 1) % waypoints.Length;
+                        target = waypoints[currentIndex].transform.position;
+                    }
                 }
+                else
+                {
+                    if (autoTarget)
+                        SetTarget(player.transform.position);
+                    //transform.position = Vector2.MoveTowards(transform.position, target, run * Time.deltaTime);
+                }
+                time += Time.deltaTime * increment;
+                //Debug.Log(time);
             }
+    
+            //else chase player
             else
             {
-                SetTarget(player.transform.position);
-                //transform.position = Vector2.MoveTowards(transform.position, target, run * Time.deltaTime);
+                if (autoTarget)
+                    SetTarget(player.transform.position);
+                transform.position = Vector2.MoveTowards(transform.position, target, run * Time.deltaTime);
+                time = 0;
             }
-            time += Time.deltaTime * increment;
-            //Debug.Log(time);
-        }
-
-        //else chase player
-        else
-        {
-            SetTarget(player.transform.position);
-            transform.position = Vector2.MoveTowards(transform.position, target, run * Time.deltaTime);
-            time = 0;
         }
 
         if (pather != null) {
@@ -99,10 +108,19 @@ public class Enemy : MonoBehaviour
         facingDirection = (target - transform.position).normalized;
     }
 
+    public void ForceTarget (Vector3 t) {
+        SetTarget (t);
+        autoTarget = false;
+    }
+    
+    public void EnableAutoTarget () { autoTarget = true; }
+
     void SetTarget(Vector3 t)
     {
         target = t;
     }
+
+    
 
     bool SpotPlayer()
     {
@@ -123,4 +141,5 @@ public class Enemy : MonoBehaviour
         return Vector3.Distance(transform.position, player.transform.position) < maxRadius && facingPlayer && res.collider == null;
     }
 
+    
 }
