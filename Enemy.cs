@@ -62,7 +62,7 @@ public class Enemy : MonoBehaviour
                     //transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
                     movementSpeed = walk;
     
-                    if (Vector2.Distance(transform.position, target) < 1)
+                    if (Vector2.Distance(transform.position, waypoints[currentIndex].transform.position) < 1)
                     {
                         currentIndex = (currentIndex + 1) % waypoints.Length;
                         target = waypoints[currentIndex].transform.position;
