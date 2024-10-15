@@ -5,50 +5,21 @@ using UnityEngine;
 public class InteractableLights : MonoBehaviour
 {
     [SerializeField] GameInput gameInput;
+    public GameObject light;
     bool isOn = false;
-    //bool isReleased = true;
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //if (gameInput.GetInteractionRelease())
-        //{
-        //    isReleased = true;
-        //    Debug.Log(isReleased.ToString());
-        //}
-    }
 
     void OnPlayerInteract()
     {
+        isOn = !isOn;
 
         if (isOn)
         {
-            
-                isOn = false;
-                Debug.Log("light on: " + isOn.ToString());
-                //isReleased = false;
-                gameObject.GetComponent<Renderer>().material.color = new Color(255, 255, 255);
-
-            
+            light.SetActive(false);
         }
         else
         {
-                isOn = true;
-                Debug.Log("light on: " + isOn.ToString());
-                //isReleased = false;
-                gameObject.GetComponent<Renderer>().material.color = new Color(255, 255, 0);
-            
+            light.SetActive(true);
+
         }
-
-        
-
-        //Debug.Log("interacted with " + gameObject.name);
     }
 }
