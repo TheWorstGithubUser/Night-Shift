@@ -9,10 +9,13 @@ public class AIPather : MonoBehaviour {
     [SerializeField] LayerMask staticObstacleMask;
 
     List<int>[] visibleNodes;
+    
+    bool[] usedNodes;
 
     // Start is called before the first frame update
     void Start(){
         visibleNodes = new List<int>[transform.childCount];
+        usedNodes = new bool[visibleNodes.Length];
         for (int i = 0; i < visibleNodes.Length; i++) {
             visibleNodes[i] = new List<int> ();
         }
@@ -38,23 +41,23 @@ public class AIPather : MonoBehaviour {
         
     }
 
-    public Vector2 FindPathFromTo (Vector2 start, Vector2 goal, int maxDepth) {
-        Vector2 retDir = Vector2.zero;
+    public Vector2 FindPath (Vector2 start, Vector2 goal, int maxDepth) {
+        /*Vector2 retDir = Vector2.zero;
         float lowestScore = 0;
         bool foundGoal = false;
-
+    
         if (Physics2D.Raycast (start, (goal - start).normalized, Vector2.Distance (start, goal), obstacleMask).collider == null)
             return (goal - start).normalized;
-
+    
         for (int i = 0; i < transform.childCount; i++) {
             Vector2 nodePos = transform.GetChild (i).position;
             float dist = Vector2.Distance (start, nodePos);
-
-            if (Physics2D.Raycast (start, (nodePos - start), dist, obstacleMask).collider != null)
+    
+            if (Physics2D.Raycast (start, (nodePos - start).normalized, dist, obstacleMask).collider != null)
                 continue;
-
+    
             (float currentScore, bool leadsToGoal) = ScoreNode (i, goal, maxDepth);
-
+    
             if ((foundGoal == leadsToGoal && lowestScore > currentScore) || (!foundGoal && leadsToGoal)) {
                 //Debug.Log ($"executed {currentScore}");
                 lowestScore = currentScore;
@@ -63,7 +66,52 @@ public class AIPather : MonoBehaviour {
             }
         }
         
-        return retDir;
+        return retDir;*/
+    
+        (_, _, int i) = ShortestPath (start, goal, maxDepth);
+        switch (i) {
+            case -2: //error
+                return Vector2.zero;
+    
+            case -1: //a direct path to the goal exists
+                return (goal - start).normalized;
+    
+            default:
+            //Debug.Log ("a" + i);
+                return ((Vector2)transform.GetChild (i).position - start).normalized;
+        }
+    }
+    
+    // distance = travel distance, complete path = whether the path leads to the goal or just somewhere close to it.
+    // i = index of first node. (-1 for straight to the goal, -2 for error)
+    public (float distance, bool completePath, int i) ShortestPath (Vector2 start, Vector2 goal, int recDepth) {
+        for (int i = 0; i < usedNodes.Length; i++) {
+            usedNodes[i] = false;
+        }
+        float dist = Vector2.Distance (start, goal);
+        if (Physics2D.Raycast (start, (goal - start).normalized, dist, obstacleMask).collider == null) {
+            return (dist, true, -1);
+        }
+        int ind = -2;
+        dist = float.MaxValue;
+        bool foundGoal = false;
+        for (int i = 0; i < transform.childCount; i++) {
+            float nodeDist = Vector2.Distance (start, transform.GetChild (i).position);
+            if (Physics2D.Raycast (start, ((Vector2)transform.GetChild(i).position-start).normalized, nodeDist, obstacleMask).collider != null)
+                continue;
+    
+            bool completePath;
+            float pathDist;
+            (pathDist, completePath) = ScoreNode (i, goal, recDepth);
+            pathDist += nodeDist;
+            if ((completePath == foundGoal && dist > pathDist) || (!foundGoal && completePath)) {
+                dist = pathDist;
+                foundGoal = completePath;
+                ind = i;
+            }
+        }
+    
+        return (dist, foundGoal, ind);
     }
 
 
