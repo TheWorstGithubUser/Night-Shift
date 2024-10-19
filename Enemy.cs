@@ -89,7 +89,7 @@ public class Enemy : MonoBehaviour
         }
 
         if (pather != null) {
-            Vector2 dir = pather.FindPathFromTo (transform.position, target, 4);
+            Vector2 dir = pather.FindPath (transform.position, target, 4);
             Vector2 sideDir = new Vector2 (-dir.y, dir.x);
             Vector2 walkDir = dir;
             for (int d = -1; d <= 1; d+=2) {
