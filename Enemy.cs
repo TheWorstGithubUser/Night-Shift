@@ -39,6 +39,9 @@ public class Enemy : MonoBehaviour
 
     private bool autoTarget = true;
 
+    Vector2 currentMovementVelocity = Vector2.zero;
+    public Vector2 CurrentMovementVelocity => currentMovementVelocity;
+
     void Start()
     {
         target = waypoints[currentIndex].transform.position;
@@ -98,7 +101,8 @@ public class Enemy : MonoBehaviour
                 }
             }
             walkDir.Normalize ();
-            transform.position += (Vector3)walkDir * movementSpeed * Time.deltaTime;
+            currentMovementVelocity = walkDir * movementSpeed;
+            transform.position += (Vector3)CurrentMovementVelocity * Time.deltaTime;
         }
         else {
             transform.position = Vector2.MoveTowards (transform.position, target, movementSpeed * Time.deltaTime);
@@ -120,7 +124,9 @@ public class Enemy : MonoBehaviour
         target = t;
     }
 
-    
+    public Vector3 GetCurrentWaypoint () {
+        return waypoints[currentIndex].position;
+    }
 
     bool SpotPlayer()
     {
