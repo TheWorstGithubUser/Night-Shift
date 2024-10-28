@@ -1,0 +1,52 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class TaskJackInABox : MonoBehaviour
+{
+    //List<Transform>[] boxes;
+    //private bool BoxTaskCompleted = false;
+    [SerializeField] private JackInABoxAnimator Box1;
+    [SerializeField] private JackInABoxAnimator Box2;
+    [SerializeField] private JackInABoxAnimator Box3;
+
+    void Start()
+    {
+        /*
+        boxes = new List<Transform>[transform.childCount];
+        foreach (Transform child in transform)
+        {
+            boxes.Add = child;
+        }
+        */ //I would love to finish this to make it easier to implement but it is currently reading my list as an array and failing to convert a transform into a transform
+    }
+
+    void FixedUpdate() {
+        if(Box1.isWound && Box2.isWound && Box3.isWound)
+        {
+            Box1.BoxTaskComplete = true;
+            Box2.BoxTaskComplete = true;
+            Box3.BoxTaskComplete = true;
+        }
+        /*
+        Debug.Log(boxes[0]);
+        BoxTaskCompleted = true;
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            
+            //if (boxes[i].isWound == false) {
+            //    BoxTaskCompleted = false;
+            //    return;
+            //}
+        }
+
+        if (BoxTaskCompleted) { 
+            for(int i = 0; i < transform.childCount; i++)
+            {
+             //   boxes[i].SetActive(false);
+            }
+        }
+        */
+    }
+}
+
