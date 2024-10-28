@@ -1,0 +1,72 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class JackInABoxAnimator : MonoBehaviour
+{
+    Animator animator = new Animator();
+    //The animator component needs two parameters, "BoxTimerSeconds" (float) and "BoxTaskComplete" (bool)
+    //Makes two states, Box Opened & Box Closed. Make sure the entry state goes to "Box Opened" as the box will start opened. The first state you create will be connected to entry,
+    //but you can right click on a state to change that by selecting "Set as Layer Default State"
+    //Create transitions from Box Closed and Box Opened by right clicking on each one and clicking "make transition"
+    //Edit both transition lines by clicking on each one, then creating conditions on the newly opened window
+    //First, set "Has Exit Time" to false by unchecking the box, then expand the settings and set the transition duration float to 0
+    //The conditions we need are different on each one. 
+    //For the transition going from closed to open, BoxTimerSeconds < 0 & BoxTaskComplete = false
+    //For the transition going from open to closed, BoxTimerSeconds > 9. Do note that 9 is a placeholder value as variables cannot be stored here. Make sure to update this if you 
+    //change BoxTimerSecondsMax, and make it equal to BoxTimerSecondsMax-1
+    //Lastly, add animations to the states in the animator window. For testing, all the animations need to be is a single frame of the open/closed sprite
+
+    [Header("Change BoxTimerSecondsMax in the animator too!")]
+    [SerializeField] private float BoxTimerSecondsMax = 10;
+
+    private bool isWinding;
+    public bool isWound;
+    public bool BoxTaskComplete = false;
+    private float BoxTimerSecondsUpdate; //What makes this different from "BoxTimerSeconds" is that I can't update BoxTimerSeconds directly, so this is more convenient
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+        BoxTimerSecondsUpdate = 0;
+        isWound = false;
+    }
+
+    void Update()
+    {
+        if (BoxTaskComplete)
+        {
+            enabled = false;    //Disables the entire script once the task is complete
+        }
+
+        if (BoxTimerSecondsUpdate > 0 && !isWinding)
+        {
+            BoxTimerSecondsUpdate -= 1 * Time.deltaTime;
+            //Debug.Log(gameObject.name + " is unwinding");
+        }
+        else if (BoxTimerSecondsUpdate < 0) {
+            isWound = false;
+        }
+
+        if (BoxTimerSecondsUpdate > BoxTimerSecondsMax) //Prevents player from winding beyond [BoxTimerSecondsMax] seconds, making over-winding snap back to [BoxTimerSecondsMax]
+        {
+            BoxTimerSecondsUpdate = BoxTimerSecondsMax;
+        }
+
+        if(BoxTimerSecondsUpdate > BoxTimerSecondsMax - 1) {
+            isWound = true;
+        }
+
+        //Debug.Log(gameObject.name + " timer at " + BoxTimerSecondsUpdate);
+        animator.SetFloat("BoxTimerSeconds", BoxTimerSecondsUpdate);
+    }
+
+    void OnPlayerInteract()
+    {
+        //Debug.Log("Winding " + gameObject.name);
+        if (BoxTimerSecondsUpdate < BoxTimerSecondsMax)
+        {
+            BoxTimerSecondsUpdate += 1;
+        }
+    }
+
+}
