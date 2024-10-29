@@ -8,6 +8,10 @@ public class Ghost: MonoBehaviour {
     Animator animator;
 	[SerializeField] string walkAnimation = "GhostWalk";
 	[SerializeField] string idleAnimation = "GhostIdle";
+    [SerializeField] string ventP1Animation = "GhostVent S1";
+    [SerializeField] float p1Length = 0.5f;
+    [SerializeField] string ventP2Animation = "GhostVent S2";
+    [SerializeField] float p2Length = 0.5f;
 
 	Enemy ai;
     private Transform targetVent = null;
@@ -46,17 +50,41 @@ public class Ghost: MonoBehaviour {
             sprite.transform.localScale = scale;
         }
 
-        if (ai.CurrentMovementVelocity.magnitude < 0.1) {
-            animator.Play (idleAnimation);
+        if (animState == ventP1Animation) {
+            if (!ai.IsWaiting) {
+                SetAnimationState (ventP2Animation);
+                transform.position = targetVent.position;
+                ai.MakeWait (p2Length);
+            }
+        }
+        else if (animState == ventP2Animation) {
+            if (!ai.IsWaiting) {
+                SetAnimationState (idleAnimation);
+            }
         }
         else {
-            animator.Play (walkAnimation);
+            if (ai.CurrentMovementVelocity.magnitude < 0.1) {
+    			SetAnimationState (idleAnimation);
+            }
+            else {
+    			SetAnimationState (walkAnimation);
+            }
         }
+        
     }
-
+    
+    void SetAnimationState (string animation) {
+        if (animation == animState) return;
+        animator.Play (animation);
+        animState = animation;
+    }
+    
     void OnTriggerEnter2D (Collider2D coll) {
-        if (coll.tag == "Vent" && shouldVent) {
-            transform.position = targetVent.position;
+        if (coll.tag == "Vent" && shouldVent && animState != ventP2Animation) {
+            SetAnimationState (ventP1Animation);
+            ai.MakeWait (p1Length);
+            transform.position = coll.transform.position;
+            //transform.position = targetVent.position;
         }
     }
 
