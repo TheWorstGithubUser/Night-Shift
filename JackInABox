@@ -5,7 +5,7 @@ using UnityEngine;
 public class JackInABoxAnimator : MonoBehaviour
 {
     Animator animator = new Animator();
-    //The animator component needs two parameters, "BoxTimerSeconds" (float) and "BoxTaskComplete" (bool)
+    //The animator component needs one parameters, "BoxTimerSeconds" (float)
     //Makes two states, Box Opened & Box Closed. Make sure the entry state goes to "Box Opened" as the box will start opened. The first state you create will be connected to entry,
     //but you can right click on a state to change that by selecting "Set as Layer Default State"
     //Create transitions from Box Closed and Box Opened by right clicking on each one and clicking "make transition"
