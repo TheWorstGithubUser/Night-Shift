@@ -36,6 +36,7 @@ public class Enemy : MonoBehaviour
     public float pushRay = 0.5f;
     public float pushRayDistance = 1;
     private float waitTime = 0;
+    public bool IsWaiting => waitTime > 0;
 
     private bool autoTarget = true;
 
@@ -126,6 +127,10 @@ public class Enemy : MonoBehaviour
 
     public Vector3 GetCurrentWaypoint () {
         return waypoints[currentIndex].position;
+    }
+
+    public void MakeWait (float time) {
+        waitTime = time;
     }
 
     bool SpotPlayer()
