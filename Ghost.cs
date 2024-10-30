@@ -6,8 +6,8 @@ public class Ghost: MonoBehaviour {
     [SerializeField] Transform ventHolder;
     [SerializeField] SpriteRenderer sprite;
     Animator animator;
-	[SerializeField] string walkAnimation = "GhostWalk";
-	[SerializeField] string idleAnimation = "GhostIdle";
+    [SerializeField] string walkAnimation = "GhostWalk";
+    [SerializeField] string idleAnimation = "GhostIdle";
     [SerializeField] string ventP1Animation = "GhostVent S1";
     [SerializeField] float p1Length = 0.5f;
     [SerializeField] string ventP2Animation = "GhostVent S2";
@@ -79,7 +79,7 @@ public class Ghost: MonoBehaviour {
         animState = animation;
     }
     
-    void OnTriggerEnter2D (Collider2D coll) {
+    void OnTriggerStay2D (Collider2D coll) {
         if (coll.tag == "Vent" && shouldVent && animState != ventP2Animation) {
             SetAnimationState (ventP1Animation);
             ai.MakeWait (p1Length);
