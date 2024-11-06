@@ -14,11 +14,12 @@ public class PlayerInteraction : MonoBehaviour{
     // Update is called once per frame
     void Update()
     {
-        if (gameInput.GetInteraction ()) {
-            Interactable? interactable = Interactable.GetInteractable(transform.position, interactionRadius);
-            if (interactable != null) {
-                interactable.SendMessage ("OnPlayerInteract", null, SendMessageOptions.DontRequireReceiver);
+        Interactable? interactable = Interactable.GetInteractable(transform.position, interactionRadius);
+        if (interactable != null) {
+            if (gameInput.GetInteraction ()) {
+                interactable.TriggerInteraction ();
             }
+            interactable.WhenSelected ();
         }
     }
 }
