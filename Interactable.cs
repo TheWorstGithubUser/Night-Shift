@@ -14,6 +14,7 @@ public class Interactable : MonoBehaviour{
 
     public bool active = true;
     public Items requiredItems = Items.None;
+    public bool removeRequiredItems = false;
 
     Inventory inventory;
 
@@ -55,6 +56,7 @@ public class Interactable : MonoBehaviour{
 
     public void TriggerInteraction () {
         if (!active || !hasCorrectItems) return;
+        if (removeRequiredItems && inventory != null) inventory.RemoveItem (requiredItems);
 		gameObject.SendMessage ("OnPlayerInteract", null, SendMessageOptions.DontRequireReceiver);
 	}
 
