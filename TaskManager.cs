@@ -48,28 +48,30 @@ public class TaskManager : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         completed = GetCompletedPercent ();
-        if (completed < 1f) {
-            // draws the list of tasks (skipping tasks that are already completed)
-            string taskList = $"{taskListLabel}\n";
-            string lastTaskName = tasks[0].displayName;
-            int taskCount = 0;
-            for (int i = 0; i < tasks.Length; i++) {
-                if (tasks[i].Complete) continue; // skips completed tasks
-                if (lastTaskName == tasks[i].displayName) {
-                    taskCount++;
+        if (text != null){
+            if (completed < 1f) {
+                // draws the list of tasks (skipping tasks that are already completed)
+                string taskList = $"{taskListLabel}\n";
+                string lastTaskName = tasks[0].displayName;
+                int taskCount = 0;
+                for (int i = 0; i < tasks.Length; i++) {
+                    if (tasks[i].Complete) continue; // skips completed tasks
+                    if (lastTaskName == tasks[i].displayName) {
+                        taskCount++;
+                    }
+                    else {
+                        taskList += FormatTask (lastTaskName, taskCount);
+            
+                        taskCount = 1;
+                        lastTaskName = tasks[i].displayName;
+                    }
                 }
-                else {
-                    taskList += FormatTask (lastTaskName, taskCount);
-        
-                    taskCount = 1;
-                    lastTaskName = tasks[i].displayName;
-                }
+                taskList += FormatTask (lastTaskName, taskCount);
+                text.text = taskList;
             }
-            taskList += FormatTask (lastTaskName, taskCount);
-            text.text = taskList;
-        }
-        else {
-            text.text = allTasksDoneMessage;
+            else {
+                text.text = allTasksDoneMessage;
+            }
         }
     }
 
