@@ -10,6 +10,8 @@ public class TaskScript : MonoBehaviour{
     [SerializeField] SpriteRenderer renderer;
     Inventory inventory;
     Interactable interactable;
+
+    public string displayName = "";
     // Start is called before the first frame update
     void Start(){
         inventory = FindObjectOfType<Inventory> ();
