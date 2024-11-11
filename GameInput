@@ -29,4 +29,8 @@ public class GameInput : MonoBehaviour
 	    return playerInputActions.Player.Interaction.IsPressed();
     }
 
+	public bool GetToggleInventory () {
+		return playerInputActions.Player.ToggleInventory.WasPressedThisFrame ();
+	}
+
 }
