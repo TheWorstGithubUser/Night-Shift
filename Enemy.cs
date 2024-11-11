@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     public GameObject player;
 
     private AIPather pather;
+    public AIPather Pather => pather;
 
     public Transform[] waypoints;
 
