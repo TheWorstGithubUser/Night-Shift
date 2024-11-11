@@ -36,6 +36,10 @@ public class Inventory : MonoBehaviour{
         this.items = this.items | items;
     }
 
+	public void RemoveItem (Items items) {
+	    this.items = this.items & ~items;
+	}
+
     public bool CheckItem (Items items) {
         return (this.items & items) == items;
     }    
