@@ -6,11 +6,11 @@ public class Ghost: MonoBehaviour {
     [SerializeField] Transform ventHolder;
     [SerializeField] SpriteRenderer sprite;
     Animator animator;
-    [SerializeField] string walkAnimation = "GhostWalk";
-    [SerializeField] string idleAnimation = "GhostIdle";
+	[SerializeField] string walkAnimation = "GhostWalk";
+	[SerializeField] string idleAnimation = "GhostIdle";
     [SerializeField] string ventP1Animation = "GhostVent S1";
-    [SerializeField] float p1Length = 0.5f;
-    [SerializeField] string ventP2Animation = "GhostVent S2";
+    [SerializeField] float p1Length = 0.4f;
+	[SerializeField] string ventP2Animation = "GhostVent S2";
     [SerializeField] float p2Length = 0.5f;
 
 	Enemy ai;
@@ -20,6 +20,8 @@ public class Ghost: MonoBehaviour {
 
     const float TIMER = 0.4f;
     float timerCurrent = 0;
+
+    string animState = "";
     // Start is called before the first frame update
     void Start () {
         ai = GetComponent<Enemy> ();
@@ -64,23 +66,23 @@ public class Ghost: MonoBehaviour {
         }
         else {
             if (ai.CurrentMovementVelocity.magnitude < 0.1) {
-    			SetAnimationState (idleAnimation);
+				SetAnimationState (idleAnimation);
             }
             else {
-    			SetAnimationState (walkAnimation);
+				SetAnimationState (walkAnimation);
             }
         }
         
     }
-    
+
     void SetAnimationState (string animation) {
         if (animation == animState) return;
         animator.Play (animation);
         animState = animation;
     }
-    
+
     void OnTriggerStay2D (Collider2D coll) {
-        if (coll.tag == "Vent" && shouldVent && animState != ventP2Animation) {
+        if (coll.tag == "Vent" && shouldVent && animState != ventP1Animation && animState != ventP2Animation) {
             SetAnimationState (ventP1Animation);
             ai.MakeWait (p1Length);
             transform.position = coll.transform.position;
