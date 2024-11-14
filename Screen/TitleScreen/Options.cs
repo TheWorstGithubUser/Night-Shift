@@ -14,13 +14,13 @@ public class Options : MonoBehaviour
 
     public Toggle fullScreenToggle;
 
-    public Slider masterSlider;
+    //public Slider masterSlider;
 
     public Slider musicSlider;
 
     public Slider sfxSlider;
 
-    float volumeNum;
+    float masterNum, musicNum, sfxNum;
 
     Resolution[] resolutions;
 
@@ -51,14 +51,15 @@ public class Options : MonoBehaviour
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
 
-        audioMixer.GetFloat("volume", out volumeNum);
-        masterSlider.value = volumeNum;
+        //audioMixer.GetFloat("volume", out masterNum);
+        //masterSlider.value = masterNum;
 
-        audioMixer.GetFloat("music", out volumeNum);
-        musicSlider.value = volumeNum;
+        audioMixer.GetFloat("music", out musicNum);
+        musicSlider.value = musicNum;
 
-        audioMixer.GetFloat("sfx", out volumeNum);
-        sfxSlider.value = volumeNum;
+        audioMixer.GetFloat("sfx", out sfxNum);
+        sfxSlider.value = sfxNum;
+
 
         int qualityLevel = QualitySettings.GetQualityLevel();
 
@@ -82,18 +83,18 @@ public class Options : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
-    public void SetMasterVolume(float volume)
-    {
-        audioMixer.SetFloat("volume", volume);
-        audioMixer.SetFloat("music", volume);
-        audioMixer.SetFloat("sfx", volume);
+    //public void SetMasterVolume(float volume)
+    //{
+    //    audioMixer.SetFloat("volume", volume);
+    //    //audioMixer.SetFloat("music", volume);
+    //    //audioMixer.SetFloat("sfx", volume);
 
-        audioMixer.GetFloat("music", out volumeNum);
-        musicSlider.value = volumeNum;
+    //    //audioMixer.GetFloat("music", out musicNum);
+    //    //musicSlider.value = musicNum;
 
-        audioMixer.GetFloat("sfx", out volumeNum);
-        sfxSlider.value = volumeNum;
-    }
+    //    //audioMixer.GetFloat("sfx", out sfxNum);
+    //    //sfxSlider.value = sfxNum;
+    //}
 
     public void SetMusicVolume(float volume)
     {
