@@ -10,6 +10,18 @@ public class Options : MonoBehaviour
 
     public Dropdown resolutionDropdown;
 
+    public Dropdown graphicsDropdown;
+
+    public Toggle fullScreenToggle;
+
+    public Slider masterSlider;
+
+    public Slider musicSlider;
+
+    public Slider sfxSlider;
+
+    float volumeNum;
+
     Resolution[] resolutions;
 
 
@@ -38,6 +50,30 @@ public class Options : MonoBehaviour
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+
+        audioMixer.GetFloat("volume", out volumeNum);
+        masterSlider.value = volumeNum;
+
+        audioMixer.GetFloat("music", out volumeNum);
+        musicSlider.value = volumeNum;
+
+        audioMixer.GetFloat("sfx", out volumeNum);
+        sfxSlider.value = volumeNum;
+
+        int qualityLevel = QualitySettings.GetQualityLevel();
+
+        graphicsDropdown.value = qualityLevel;
+
+        if (Screen.fullScreen == true)
+        {
+            fullScreenToggle.isOn = true;
+        }
+        else
+        {
+            fullScreenToggle.isOn = false;
+        }
+
+
     }
 
     public void SetResolution (int resolutionIndex)
@@ -46,9 +82,27 @@ public class Options : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
-    public void SetVolume(float volume)
+    public void SetMasterVolume(float volume)
     {
         audioMixer.SetFloat("volume", volume);
+        audioMixer.SetFloat("music", volume);
+        audioMixer.SetFloat("sfx", volume);
+
+        audioMixer.GetFloat("music", out volumeNum);
+        musicSlider.value = volumeNum;
+
+        audioMixer.GetFloat("sfx", out volumeNum);
+        sfxSlider.value = volumeNum;
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        audioMixer.SetFloat("music", volume);
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        audioMixer.SetFloat("sfx", volume);
     }
 
     public void SetQuality(int qualityIndex)
