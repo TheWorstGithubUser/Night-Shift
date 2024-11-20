@@ -31,8 +31,8 @@ public class Enemy : MonoBehaviour
     public bool seesPlayer = false;
 
     private Vector2 facingDirection;
-    private float time;
-    public bool RemembersPlayer => time <= 1;
+    private float time = 1.1;
+    public bool RemembersPlayer => time < 1;
 
     public float pushRay = 0.5f;
     public float pushRayDistance = 1;
