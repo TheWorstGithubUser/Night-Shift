@@ -19,9 +19,9 @@ public class Enemy : MonoBehaviour
     private AIPather pather;
     public AIPather Pather => pather;
 
-	public float increment = 1/3f;
+    public float increment = 1/3f;
 
-	public float maxAngle;
+    public float maxAngle;
     public float maxRadius;
 
     public float walk = 2f;
@@ -32,7 +32,7 @@ public class Enemy : MonoBehaviour
     public bool seesPlayer = false;
 
     private Vector2 facingDirection;
-	private float time;
+    private float time;
     public bool RemembersPlayer => time <= 1;
 
     public float pushRay = 0.5f;
@@ -45,6 +45,12 @@ public class Enemy : MonoBehaviour
 
     private bool autoTarget = true;
 
+
+    private Vector2 moveDir = Vector2.zero;
+    private float aiPathTime = 0;
+
+    public const float PATH_CHECK_INTERVOL = 0.3f;
+
     Vector2 currentMovementVelocity = Vector2.zero;
     public Vector2 CurrentMovementVelocity => currentMovementVelocity;
 
@@ -52,6 +58,7 @@ public class Enemy : MonoBehaviour
     {
         target = waypoints[currentIndex].transform.position;
         pather = FindObjectOfType<AIPather> ();
+        aiPathTime = UnityEngine.Random.Range (0.0f, PATH_CHECK_INTERVOL);
     }
 
     void Update()
@@ -89,30 +96,38 @@ public class Enemy : MonoBehaviour
                 //transform.position = Vector2.MoveTowards (transform.position, target, run * Time.deltaTime);
                 time = 0;
             }
-            if (pather != null) {
-                Vector2 dir = pather.FindPath (transform.position, target, pathDepth);
-                Vector2 sideDir = new Vector2 (-dir.y, dir.x);
-                Vector2 walkDir = dir;
-                for (int d = -1; d <= 1; d+=2) {
-                    if (Physics2D.Raycast (transform.position, dir + sideDir * pushRay * d, pushRayDistance, pather.GetObstacleMask ()).collider != null) {
-                        walkDir -= sideDir * pushRay * d;
-                    }
-                }
-                walkDir.Normalize ();
-                currentMovementVelocity = walkDir * movementSpeed;
-                transform.position += (Vector3)CurrentMovementVelocity * Time.deltaTime;
-            }
-            else {
-                transform.position = Vector2.MoveTowards (transform.position, target, movementSpeed * Time.deltaTime);
 
+            if (aiPathTime < 0) {
+                if (pather != null) {
+                    Vector2 dir = pather.FindPath (transform.position, target, pathDepth);
+                    Vector2 sideDir = new Vector2 (-dir.y, dir.x);
+                    Vector2 walkDir = dir;
+                    for (int d = -1; d <= 1; d+=2) {
+                        if (Physics2D.Raycast (transform.position, dir + sideDir * pushRay * d, pushRayDistance, pather.GetObstacleMask ()).collider != null) {
+                            walkDir -= sideDir * pushRay * d;
+                        }
+                    }
+                    walkDir.Normalize ();
+                    currentMovementVelocity = walkDir * movementSpeed;
+                    //transform.position += (Vector3)CurrentMovementVelocity * Time.deltaTime;
+                }
+                else {
+                    currentMovementVelocity = (Vector2)(target - transform.position).normalized * movementSpeed;
+                    //transform.position = Vector2.MoveTowards (transform.position, target, movementSpeed * Time.deltaTime);
+                }
+                aiPathTime = PATH_CHECK_INTERVOL;
             }
+
+            aiPathTime -= Time.deltaTime;
+
+            transform.position += (Vector3)currentMovementVelocity * Time.deltaTime;
         }
 
         
 
-		facingDirection = (target - transform.position).normalized;
+        facingDirection = (target - transform.position).normalized;
         waitTime = MathF.Max(waitTime - Time.deltaTime, 0);
-	}
+    }
 
     void SetTarget(Vector3 t)
     {
