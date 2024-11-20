@@ -30,18 +30,28 @@ public class MannequinScript : MonoBehaviour
 
     public float pushRay = 0.5f;
     public float pushRayDistance = 1;
+    public int pathDepth = 3;
 
     private bool autoTarget = true;
 
     public bool active = true;
 
+    private float aiPathTime = 0;
+
+    public float pathCheckIntervol = 0.2f;
+
+    private Vector2 currentVelocity = Vector2.zero;
+
     public AudioSource audio;
+
 
     void Start()
     {
         target = player.transform.position;
         time = 3f;
-        increment = 1 / 60f;
+        //increment = 1 / 60f;
+
+        aiPathTime = UnityEngine.Random.Range (0.0f, pathCheckIntervol);
 
         pather = FindObjectOfType<AIPather>();
 
@@ -56,40 +66,41 @@ public class MannequinScript : MonoBehaviour
         {
             if (autoTarget)
                SetTarget(player.transform.position);
-            transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
+            //transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
             time = 0;
-            if (pather != null)
-            {
-                Vector2 dir = pather.FindPath(transform.position, target, 4);
-                Vector2 sideDir = new Vector2(-dir.y, dir.x);
-                Vector2 walkDir = dir;
-                for (int d = -1; d <= 1; d += 2)
-                {
-                    if (Physics2D.Raycast(transform.position, dir + sideDir * pushRay * d, pushRayDistance, pather.GetObstacleMask()).collider != null)
-                    {
-                        walkDir -= sideDir * pushRay * d;
+            if (aiPathTime < 0) {
+                if (pather != null) {
+                    Vector2 dir = pather.FindPath (transform.position, target, pathDepth);
+                    Vector2 sideDir = new Vector2 (-dir.y, dir.x);
+                    Vector2 walkDir = dir;
+                    for (int d = -1; d <= 1; d += 2) {
+                        if (Physics2D.Raycast (transform.position, dir + sideDir * pushRay * d, pushRayDistance, pather.GetObstacleMask ()).collider != null) {
+                            walkDir -= sideDir * pushRay * d;
+                        }
                     }
+                    walkDir.Normalize ();
+                    currentVelocity = walkDir * walk;
                 }
-                walkDir.Normalize();
-                transform.position += (Vector3)walkDir * walk * Time.deltaTime;
+                else {
+                    currentVelocity = (target - transform.position).normalized;
+                }
+                aiPathTime += pathCheckIntervol;
+                if (aiPathTime < -pathCheckIntervol * 0.5f) aiPathTime = pathCheckIntervol;
             }
-            else
-            {
-                transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
-
-            }
+            aiPathTime -= Time.deltaTime;
+            transform.position += (Vector3)currentVelocity * Time.deltaTime;
         }
         else
         {
             if (disabledTimer > 0)
             {
                 disabledTimer -= Time.deltaTime;
-                audio.Stop();
+                if (audio != null) audio.Stop();
             }
             else
             {
                 active = true;
-                audio.Play();
+                if (audio != null) audio.Play();
                 disabledTimer = 20;
             }
         }
