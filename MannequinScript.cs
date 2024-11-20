@@ -7,8 +7,7 @@ public class MannequinScript : MonoBehaviour
 {
     public Vector3 target;
 
-    [SerializeField] private LayerMask obstacleMask;
-    //[SerializeField] private LayerMask playerMask;
+    [SerializeField] LayerMask obstacleMask;
 
     public GameObject player;
 
@@ -18,12 +17,7 @@ public class MannequinScript : MonoBehaviour
 
     private AIPather pather;
 
-    //public Transform[] waypoints;
-    public float maxAngle;
-    public float maxRadius;
-
-    public float walk = 2f;
-    public float run = 5f;
+    public float walk = 4f;
 
     private float time;
     public float increment = 1 / 3f;
@@ -41,9 +35,11 @@ public class MannequinScript : MonoBehaviour
 
     public bool active = true;
 
+    public AudioSource audio;
+
     void Start()
     {
-        //target = waypoints[currentIndex].transform.position;
+        target = player.transform.position;
         time = 3f;
         increment = 1 / 60f;
 
@@ -51,16 +47,16 @@ public class MannequinScript : MonoBehaviour
 
         collider = this.GetComponent<CapsuleCollider2D>();
         rigidBody = this.GetComponent<Rigidbody2D>();
+        audio = this.GetComponent<AudioSource>();
     }
 
     void Update()
     {
-        float movementSpeed = run;
         if (active)
         {
             if (autoTarget)
                SetTarget(player.transform.position);
-            transform.position = Vector2.MoveTowards(transform.position, target, run * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
             time = 0;
             if (pather != null)
             {
@@ -75,11 +71,11 @@ public class MannequinScript : MonoBehaviour
                     }
                 }
                 walkDir.Normalize();
-                transform.position += (Vector3)walkDir * movementSpeed * Time.deltaTime;
+                transform.position += (Vector3)walkDir * walk * Time.deltaTime;
             }
             else
             {
-                transform.position = Vector2.MoveTowards(transform.position, target, movementSpeed * Time.deltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, target, walk * Time.deltaTime);
 
             }
         }
@@ -88,10 +84,12 @@ public class MannequinScript : MonoBehaviour
             if (disabledTimer > 0)
             {
                 disabledTimer -= Time.deltaTime;
+                audio.Stop();
             }
             else
             {
                 active = true;
+                audio.Play();
                 disabledTimer = 20;
             }
         }
@@ -99,7 +97,7 @@ public class MannequinScript : MonoBehaviour
         facingDirection = (target - transform.position).normalized;
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerStay2D(Collider2D col)
     {
         if (col.gameObject.CompareTag("FOV"))
         {
