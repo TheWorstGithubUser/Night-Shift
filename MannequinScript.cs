@@ -17,7 +17,7 @@ public class MannequinScript : MonoBehaviour
 
     private AIPather pather;
 
-    public float walk = 4f;
+    public float walk = 8f;
 
     private float time;
     public float increment = 1 / 3f;
