@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
@@ -49,7 +48,7 @@ public class Enemy : MonoBehaviour
     private Vector2 moveDir = Vector2.zero;
     private float aiPathTime = 0;
 
-    public const float PATH_CHECK_INTERVOL = 0.3f;
+    public const float pathCheckIntervol = 0.3f;
 
     Vector2 currentMovementVelocity = Vector2.zero;
     public Vector2 CurrentMovementVelocity => currentMovementVelocity;
@@ -58,7 +57,7 @@ public class Enemy : MonoBehaviour
     {
         target = waypoints[currentIndex].transform.position;
         pather = FindObjectOfType<AIPather> ();
-        aiPathTime = UnityEngine.Random.Range (0.0f, PATH_CHECK_INTERVOL);
+        aiPathTime = UnityEngine.Random.Range (0.0f, pathCheckIntervol);
     }
 
     void Update()
@@ -115,7 +114,9 @@ public class Enemy : MonoBehaviour
                     currentMovementVelocity = (Vector2)(target - transform.position).normalized * movementSpeed;
                     //transform.position = Vector2.MoveTowards (transform.position, target, movementSpeed * Time.deltaTime);
                 }
-                aiPathTime = PATH_CHECK_INTERVOL;
+                
+                aiPathTime += pathCheckIntervol;
+                if (aiPathTime < -pathCheckIntervol * 0.5f) aiPathTime = pathCheckIntervol;
             }
 
             aiPathTime -= Time.deltaTime;
