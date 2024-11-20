@@ -10,6 +10,7 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.Enable();
     }
 
+    //Gets the vector2 for the direction the player is moving in
     public Vector2 GetMovementVectorNormalized()
     {
         Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
@@ -25,12 +26,38 @@ public class GameInput : MonoBehaviour
         return mousePos;
     }
 
-    public bool GetInteraction () {
-	    return playerInputActions.Player.Interaction.IsPressed();
+    //Determines if the interact button was pressed
+    public bool GetInteraction()
+    {
+        return playerInputActions.Player.Interaction.WasPressedThisFrame();
     }
 
-	public bool GetToggleInventory () {
-		return playerInputActions.Player.ToggleInventory.WasPressedThisFrame ();
-	}
+    //Determines if a button was pressed
+    public int GetButton() 
+    {
+        //Click
+        if (playerInputActions.Player.Click.WasPressedThisFrame())
+        {
+            return 1;
+        }
+        if (playerInputActions.Player.Click.IsPressed())
+        {
+            //Unused right now
+        }
+        if (playerInputActions.Player.Click.WasReleasedThisFrame())
+        {
+            //Unused right now
+        }
+        return -1;
 
+    }
+    public bool GetToggleInventory()
+    {
+        return playerInputActions.Player.ToggleInventory.WasPressedThisFrame();
+    }
+
+    public void OnDisable()
+    {
+        playerInputActions.Player.Disable();
+    }
 }
