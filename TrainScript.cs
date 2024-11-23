@@ -7,18 +7,27 @@ public class TrainScript : MonoBehaviour
 {
     public Transform[] stations;//station location
     public float speed;         //train speed
-    public int currStation;    //current target station
-    public float stopTime;    //time at station
+    public int currStation;     //current target station
+    public float stopTime;      //time at station
     Vector2 nextStop;           
     Vector2 lastStop;
+    Rigidbody2D rb;
     Collider2D collider;
+    [SerializeField] GameObject colliderObj;
     [SerializeField] LightField lightField;
     [SerializeField] Interactable interact;
     [SerializeField] GameObject player;
     [SerializeField] GameObject fov;
+    [SerializeField] Animator animator;
     private float rotation;
     private bool playerRiding;
     private bool atStation;
+    private string animState;
+    const string TrainRightAnim = "TrainRight";
+    const string TrainLeftAnim = "TrainLeft";
+    const string TrainUpAnim = "TrainUp";
+    const string TrainDownAnim = "TrainDown";
+
 
 
     // Start is called before the first frame update
@@ -27,9 +36,12 @@ public class TrainScript : MonoBehaviour
         speed = 15f;
         currStation = 0;
         nextStop = new Vector2(stations[currStation].position.x, stations[currStation].position.y);
-        collider = GetComponent<BoxCollider2D>();
+        rb = GetComponent<Rigidbody2D>();
         playerRiding = false;
         atStation = false;
+        animState = TrainRightAnim;
+        SetAnimationState(animState);
+        collider = colliderObj.GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -46,7 +58,7 @@ public class TrainScript : MonoBehaviour
                 }
             }
         }
-        if (currStation > stations.Length-1)
+        if (currStation == stations.Length)
         {
             currStation = 0;
         }
@@ -68,24 +80,35 @@ public class TrainScript : MonoBehaviour
             lastStop = new Vector2(stations[currStation].transform.position.x - transform.position.x, stations[currStation].transform.position.y - transform.position.y);
             rotation = Mathf.Atan2(lastStop.y, lastStop.x) * Mathf.Rad2Deg;
             lightField.SetAimDirection(rotation);
+            collider.transform.rotation = Quaternion.Euler(0, 0, rotation);
+            moveTrain();
         }
         moveTrain();
     }
 
     void moveTrain()
     {
-        transform.position = Vector2.MoveTowards(transform.position, nextStop, speed*Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, nextStop, speed * Time.deltaTime);
+
+        // Manually calculate the velocity
+        Vector2 direction = (nextStop - (Vector2)transform.position).normalized;
+        Vector2 velocity = direction * speed;
+        if (!atStation)
+        {
+            //get animation state based on velocity
+            if (velocity.x > 0)
+                SetAnimationState(TrainRightAnim);
+            else if (velocity.x < 0)
+                SetAnimationState(TrainLeftAnim);
+            else if (velocity.y > 0)
+                SetAnimationState(TrainUpAnim);
+            else
+                SetAnimationState(TrainDownAnim);
+        }
+
         if (playerRiding)
         {
             player.transform.position = transform.position;
-        }
-    }
-
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.CompareTag("Player") && !atStation)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 
@@ -121,5 +144,19 @@ public class TrainScript : MonoBehaviour
         }
     }
 
-    
+    void SetAnimationState(string animation)
+    {
+        if (animation == animState) return;
+        animator.Play(animation);
+        animState = animation;
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.CompareTag("Player"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+    }
 }
+
