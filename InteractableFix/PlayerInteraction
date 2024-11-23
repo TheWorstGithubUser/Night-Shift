@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerInteraction : MonoBehaviour
+{
+    GameInput gameInput;
+    [SerializeField] float interactionRadius = 3;
+    // Start is called before the first frame update
+    void Start()
+    {
+        gameInput = FindAnyObjectByType<GameInput>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Interactable? interactable = Interactable.GetInteractable(transform.position, interactionRadius);
+        if (interactable != null)
+        {
+            if (gameInput.GetInteraction() == 1) //button is pressed
+            {
+                interactable.TriggerInteraction();
+            } 
+            else if (gameInput.GetInteraction() == 2)    //button is being held down
+            {
+                interactable.TriggerInteractionHeld();  //NEWLY ADDED
+            }
+            interactable.WhenSelected();
+        }
+    }
+}
