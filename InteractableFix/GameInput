@@ -1,0 +1,68 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+public class GameInput : MonoBehaviour
+{
+    private PlayerInputActions playerInputActions;
+    private void Awake()
+    {
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Player.Enable();
+    }
+
+    //Gets the vector2 for the direction the player is moving in
+    public Vector2 GetMovementVectorNormalized()
+    {
+        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
+
+        inputVector = inputVector.normalized;
+
+        return inputVector;
+    }
+
+    public Vector2 GetPlayerCursorLocation()
+    {
+        Vector2 mousePos = playerInputActions.Player.Mouse.ReadValue<Vector2>();
+        return mousePos;
+    }
+
+    //Determines if the interact button was pressed
+    public int GetInteraction() //NEWLY ADDED: GetInteraction changed from bool to int
+    {
+        if (playerInputActions.Player.Interaction.WasPressedThisFrame()) {  //Button was pressed
+            return 1;
+        }
+        if (playerInputActions.Player.Interaction.IsPressed()) {    //Button is being held down. Do not call this on anything you dont want receiving interactions 1000 times a second
+            return 2;
+        }
+        return -1;  //fail condition, should never return -1
+    }
+
+    //Determines if a button was pressed
+    public int GetButton() 
+    {
+        //Click
+        if (playerInputActions.Player.Click.WasPressedThisFrame())
+        {
+            return 1;
+        }
+        if (playerInputActions.Player.Click.IsPressed())
+        {
+            //Unused right now
+        }
+        if (playerInputActions.Player.Click.WasReleasedThisFrame())
+        {
+            //Unused right now
+        }
+        return -1;
+    }
+    public bool GetToggleInventory()
+    {
+        return playerInputActions.Player.ToggleInventory.WasPressedThisFrame();
+    }
+
+    public void OnDisable()
+    {
+        playerInputActions.Player.Disable();
+    }
+}
