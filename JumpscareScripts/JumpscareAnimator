@@ -1,0 +1,31 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class JumpscareAnimator : MonoBehaviour
+{
+    [SerializeField] private JumpscareData JumpscareData;
+    //private GameObject background;
+    private Animator animator;
+    void Start() {
+        animator = GetComponent<Animator>();
+        background = this.gameObject.transform.GetChild(0).gameObject;
+    }
+
+    //Currently does not account for the other enemies, but its just a copy paste for the other booleans
+    void FixedUpdate() {
+
+        if (JumpscareData.Ghost) {
+            //background.SetActive(true); //I tried to implement a background to cover up the screen, but it kept overlaying over the jumpscare itself 
+            animator.Play("GhostJumpscare");
+            this.enabled = false;
+        }
+    }
+
+    //Call this on the last frame of the jumpscare animation 
+    void GoToDeathScreen() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);   
+    }
+
+}
