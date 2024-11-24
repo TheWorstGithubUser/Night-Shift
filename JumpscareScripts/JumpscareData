@@ -1,0 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class JumpscareData : MonoBehaviour
+{
+    public bool Ghost = false;
+    public bool Mannequin = false;
+    public bool Train = false;
+}
+
+//This script is designed to hold data for enemy scripts and the jumpscare animator.
+//All Enemy AI scripts should have this script attached, and update the associated boolean to true when you want the jumpscare to play
+//JumpscareAnimator will send the player to the main menu after the jumpscare ends. Do this via an animation event
+
+//This script will be attached to an empty gameobject in the scene
