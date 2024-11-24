@@ -10,7 +10,7 @@ public class JumpscareAnimator : MonoBehaviour
     private Animator animator;
     void Start() {
         animator = GetComponent<Animator>();
-        background = this.gameObject.transform.GetChild(0).gameObject;
+        //background = this.gameObject.transform.GetChild(0).gameObject;
     }
 
     //Currently does not account for the other enemies, but its just a copy paste for the other booleans
