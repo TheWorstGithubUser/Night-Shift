@@ -1,23 +1,29 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TaskManager : MonoBehaviour{
-    // This is a script that tracks how many tasks have been completed
+
     
-    int uncompletedTasks = 0;
-    TaskScript[] tasks; // These are the tasks
-    public float completed;
+    //int uncompletedTasks = 0;
+    TaskScript[] tasks;
+    public int completed;
+
 
     [SerializeField] TextMeshProUGUI text;
 
     [SerializeField] string taskListLabel = "TaskList:";
     [SerializeField] string allTasksDoneMessage = "All Tasks Completed";
+    [SerializeField] Animator taskCompletionMessage;
+    [SerializeField] string taskCompletionMessageAnimationName;
     // Start is called before the first frame update
     void Start(){
         tasks = FindObjectsByType<TaskScript> (FindObjectsSortMode.None);
-        for (int i = tasks.Length-1; i >= 0; i--) { // sorts the list (this is important to get them to display properly)
+
+        for (int i = tasks.Length-1; i >= 0; i--) {
             bool swap = false;
             for (int j = 0; j < i; j++) {
                 if (string.Compare (tasks[j].displayName, tasks[j+1].displayName) < 0) {
@@ -29,51 +35,59 @@ public class TaskManager : MonoBehaviour{
             }
             if (!swap) break;
         }
+
+        if (taskCompletionMessage != null) taskCompletionMessage.Play (taskCompletionMessageAnimationName, -1, 1);
     }
 
-    // this counts the number of tasks that have been completed
+    
+
     public int GetCompletedTasks () {
         int num = 0;
+
+        
+
         for (int i = 0; i < tasks.Length; i++) {
-            if (tasks[i].Complete) num++;
+            if (tasks[i].Complete)
+                num++;
+            
+                
         }
         return num;
     }
 
-    // this counts the number of tasks completed, and returns the % (0 = 0%, 1 = 100%)
     public float GetCompletedPercent () {
         return GetCompletedTasks () / ((float)tasks.Length);
     }
 
     // Update is called once per frame
     void Update(){
-        completed = GetCompletedPercent ();
-        if (text != null){
-            if (completed < 1f) {
-                // draws the list of tasks (skipping tasks that are already completed)
-                string taskList = $"{taskListLabel}\n";
-                string lastTaskName = tasks[0].displayName;
-                int taskCount = 0;
-                for (int i = 0; i < tasks.Length; i++) {
-                    if (tasks[i].Complete) continue; // skips completed tasks
-                    if (lastTaskName == tasks[i].displayName) {
-                        taskCount++;
-                    }
-                    else {
-                        taskList += FormatTask (lastTaskName, taskCount);
-            
-                        taskCount = 1;
-                        lastTaskName = tasks[i].displayName;
-                    }
+        int nowCompleted = GetCompletedTasks ();
+        if (taskCompletionMessage != null && nowCompleted > completed) taskCompletionMessage.Play (taskCompletionMessageAnimationName, -1, 0);
+        completed = nowCompleted;
+
+        if (completed < tasks.Length) {
+            string taskList = $"{taskListLabel}\n";
+            string lastTaskName = tasks[0].displayName;
+            int taskCount = 0;
+            for (int i = 0; i < tasks.Length; i++) {
+                if (tasks[i].Complete) continue;
+                if (lastTaskName == tasks[i].displayName) {
+                    taskCount++;
                 }
-                taskList += FormatTask (lastTaskName, taskCount);
-                text.text = taskList;
+                else {
+                    taskList += FormatTask (lastTaskName, taskCount);
+
+                    taskCount = 1;
+                    lastTaskName = tasks[i].displayName;
+                }
             }
-            else {
-                text.text = allTasksDoneMessage;
-            }
+            taskList += FormatTask (lastTaskName, taskCount);
+            text.text = taskList;
         }
-    }
+        else {
+            text.text = allTasksDoneMessage;
+        }
+	}
 
     public static string FormatTask (string taskName, int taskCount) {
         switch (taskCount) {
@@ -83,6 +97,7 @@ public class TaskManager : MonoBehaviour{
                 return $"{taskName}\n";
             default:
                 return $"{taskName}: {taskCount}\n";
+                
         }
     }
 }
