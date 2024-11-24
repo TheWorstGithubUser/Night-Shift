@@ -6,12 +6,13 @@ using UnityEngine;
 public class VentVine : MonoBehaviour{
     public bool active = true;
 
-    [SerializeField] private Transform target;
+    private Transform target;
     [SerializeField] private LayerMask obstacleMask;
     [SerializeField] private float movementSpeed = 2;
     [SerializeField] private float returnSpeed = 2;
 
     [SerializeField] private float mouthOpenDistance = 3;
+    [SerializeField] private float mouthOpenDeg = 45;
     [SerializeField] private float chompDist = 0.25f;
 
     [SerializeField] private SpriteRenderer jawUpper;
@@ -60,7 +61,7 @@ public class VentVine : MonoBehaviour{
             ReturnToVent ();
         }
         float plDist = dist.magnitude;
-        SetMouthOpenness (target.position - transform.position, MouthOpenFunction ((mouthOpenDistance - plDist)/mouthOpenDistance)*45);
+        SetMouthOpenness (target.position - transform.position, MouthOpenFunction ((mouthOpenDistance - plDist)/mouthOpenDistance)*mouthOpenDeg);
     }
 
     void InactiveUpdate () {
