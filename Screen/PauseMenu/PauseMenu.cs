@@ -14,12 +14,14 @@ public class PauseMenu : MonoBehaviour
 
     public GameObject optionsPauseUI;
 
+    [SerializeField] private GameInput gameInput;
+
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if(GameIsPaused)
+            if (GameIsPaused)
             {
                 Resume();
             }
@@ -50,8 +52,8 @@ public class PauseMenu : MonoBehaviour
     {
         Debug.Log("Loading menu...");
         GameIsPaused = false;
+        gameInput.OnDisable();
         SceneManager.LoadScene(0);
-
     }
 
     public void QuitGame()
