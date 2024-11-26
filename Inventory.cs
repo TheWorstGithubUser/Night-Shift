@@ -7,6 +7,7 @@ using UnityEngine;
 public class Inventory : MonoBehaviour{
     public Items items = Items.None;
     [SerializeField] RectTransform inventoryUI;
+    [SerializeField] GameObject[] togglable = new GameObject[0];
     
 
     [SerializeField] GameInput input;
@@ -27,6 +28,10 @@ public class Inventory : MonoBehaviour{
             if (input.GetToggleInventory ()) {
                 open = !open;
                 inventoryUI.gameObject.SetActive (open);
+                for (int i = 0; i < togglable.Length; i++) {
+                    togglable[i].SetActive (open);
+                }
+                //for (int i = 0;)
             }
         }
 	}
@@ -36,9 +41,9 @@ public class Inventory : MonoBehaviour{
         this.items = this.items | items;
     }
 
-	public void RemoveItem (Items items) {
-	    this.items = this.items & ~items;
-	}
+    public void RemoveItem (Items items) {
+        this.items = this.items & ~items;
+    }
 
     public bool CheckItem (Items items) {
         return (this.items & items) == items;
@@ -50,5 +55,6 @@ public enum Items {
     None = 0,
     Broom = 1,
     KeyCard = 1<<1,
-    Keys = 1<<2,
+    WeedKiller = 1<<2,
+    Shirt = 1<<3
 }
