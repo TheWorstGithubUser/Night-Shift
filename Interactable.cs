@@ -36,18 +36,19 @@ public class Interactable : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        if (popup != null) {
-			popupPhase = Mathf.Clamp (popupPhase, 0, 1);
+        if (inventory != null) { // test for required items
+            hasCorrectItems = inventory.CheckItem (requiredItems);
+        }
+
+        if (popup != null) { // handle popup
+		    popupPhase = Mathf.Clamp (popupPhase, 0, 1);
             popup.transform.localScale = (Mathf.Exp(popupPhase)-1)/Mathf.Exp(1) * popupScale;
             popup.transform.localPosition = Vector3.Lerp(popupHidePos, popupPos, Mathf.SmoothStep(0, 1, popupPhase));
-			popupPhase -= Time.deltaTime / selectionTime;
+		    popupPhase -= Time.deltaTime / selectionTime;
             var col = popup.color;
-            if (inventory != null)
-                hasCorrectItems = inventory.CheckItem (requiredItems);
             col.a = hasCorrectItems ? 1 : 0.5f;
             popup.color = col;
         }
-        
     }
 
     public void WhenSelected () {
