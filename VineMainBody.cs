@@ -23,6 +23,7 @@ public class VineMainBody : MonoBehaviour{
     void Update(){
         vineTime -= Time.deltaTime;
 
+        // grows vines
         if (vineTime <= 0) {
             vineTime += vineGrowthTime;
 
@@ -39,12 +40,13 @@ public class VineMainBody : MonoBehaviour{
     }
 
     void OnPlayerInteract () {
-        vineTime = vineGrowthTime;
+        vineTime = vineGrowthTime;// kills all vines
         for (int i = 0; i < vines.Length; i++) {
             vines[i].active = false;
         }
     }
 
+    // changes a random vine from grown to ungrown
     void ChangeRandomVine (bool activeValue) {
         //counts flippable objects
         int numVinesMS = 0;
@@ -68,10 +70,10 @@ public class VineMainBody : MonoBehaviour{
             }
         }
 
-        Debug.Log ($"ended up with {idx}");
+        //Debug.Log ($"ended up with {idx}");
         
 
         if (idx < vines.Length) vines[idx].active = activeValue;
-        else Debug.Log ($"VentIDX {idx} is out of bounds");
+        //else Debug.Log ($"VentIDX {idx} is out of bounds");
     }
 }
